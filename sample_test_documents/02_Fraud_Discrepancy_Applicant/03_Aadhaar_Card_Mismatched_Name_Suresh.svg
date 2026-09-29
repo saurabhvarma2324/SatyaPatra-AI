@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="20" y="20" width="860" height="560" fill="#f8fafc" rx="8"/>
+  <text x="50" y="50" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">GOVERNMENT OF INDIA</text><text x="50" y="78" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Unique Identification Authority of India (UIDAI)</text><text x="50" y="106" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Name: Suresh Kumar Verma</text><text x="50" y="134" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">DOB: 01/01/1998</text><text x="50" y="162" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Gender: Male</text><text x="50" y="190" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">9988 7766 5544</text><text x="50" y="218" font-family="Arial, sans-serif" font-size="16" fill="#1e293b">Mera Aadhaar, Meri Pehchan</text>
+</svg>

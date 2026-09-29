@@ -1,0 +1,57 @@
+{
+  "genuine_applicant": {
+    "title": "Set 1: Genuine ST Candidate (Birsa Munda)",
+    "expected_result": "LOW RISK (< 20/100) — EMERALD GREEN",
+    "formData": {
+      "fullName": "Birsa Munda",
+      "dob": "2002-11-15",
+      "gender": "Male",
+      "category": "Scheduled Tribe (ST)",
+      "subTribe": "Munda",
+      "aadhaarNumber": "543298761234",
+      "annualIncome": 120000,
+      "course": "B.Tech Computer Science and Engineering",
+      "institutionName": "National Institute of Technology, Ranchi",
+      "rollNumber": "2024CS091",
+      "percentage": 78.5,
+      "bankAccountNumber": "30198274615",
+      "ifscCode": "SBIN0001234",
+      "bankName": "State Bank of India"
+    },
+    "documents": {
+      "caste_certificate": "sample_test_documents/01_Genuine_ST_Applicant_Birsa_Munda/01_Caste_Certificate_ST_Munda.png",
+      "income_certificate": "sample_test_documents/01_Genuine_ST_Applicant_Birsa_Munda/02_Income_Certificate_120000.png",
+      "aadhaar_card": "sample_test_documents/01_Genuine_ST_Applicant_Birsa_Munda/03_Aadhaar_Card_Birsa_Munda.png",
+      "mark_sheet": "sample_test_documents/01_Genuine_ST_Applicant_Birsa_Munda/04_Marksheet_78_Percent.png",
+      "bank_passbook": "sample_test_documents/01_Genuine_ST_Applicant_Birsa_Munda/05_Bank_Passbook_SBI.png",
+      "admission_proof": "sample_test_documents/01_Genuine_ST_Applicant_Birsa_Munda/06_Admission_Bonafide_NIT_Ranchi.png"
+    }
+  },
+  "fraud_discrepant_applicant": {
+    "title": "Set 2: Fraud / Mismatched Candidate",
+    "expected_result": "HIGH RISK (80-100/100) — CRIMSON RED",
+    "discrepancies": [
+      "Caste Certificate has General Category (triggers INVALID_CATEGORY defect)",
+      "Income Certificate is ₹9,50,000 (exceeds ₹6,00,000 threshold)",
+      "Aadhaar Card has different name 'Suresh Kumar Verma' and DOB '01/01/1998' (triggers NAME_MISMATCH and DOB_MISMATCH)",
+      "Marksheet belongs to 'Rajesh Patel' with 42% (triggers NAME_MISMATCH and LOW_PERCENTAGE)",
+      "Bank Passbook has mismatched account 'Vikram Singh' (triggers BANK_ACCOUNT_MISMATCH)",
+      "Admission proof is replaced by an unrelated electricity bill (triggers DOCUMENT_TYPE_MISMATCH)"
+    ],
+    "documents": {
+      "caste_certificate": "sample_test_documents/02_Fraud_Discrepancy_Applicant/01_Caste_Certificate_General_Category.png",
+      "income_certificate": "sample_test_documents/02_Fraud_Discrepancy_Applicant/02_Income_Certificate_High_Income_950000.png",
+      "aadhaar_card": "sample_test_documents/02_Fraud_Discrepancy_Applicant/03_Aadhaar_Card_Mismatched_Name_Suresh.png",
+      "mark_sheet": "sample_test_documents/02_Fraud_Discrepancy_Applicant/04_Marksheet_Mismatched_Candidate.png",
+      "bank_passbook": "sample_test_documents/02_Fraud_Discrepancy_Applicant/05_Bank_Passbook_Mismatched_Account.png",
+      "admission_proof": "sample_test_documents/02_Fraud_Discrepancy_Applicant/06_Random_Utility_Bill_Non_Document.png"
+    }
+  },
+  "blurry_quality_test": {
+    "title": "Set 3: Blurry Degraded Document",
+    "expected_result": "QUALITY ALERT: IMAGE_BLURRY (Laplacian variance < 75.0)",
+    "documents": {
+      "blurry_caste_certificate": "sample_test_documents/03_Blurry_Low_Quality/01_Blurry_Degraded_Caste_Certificate.png"
+    }
+  }
+}
