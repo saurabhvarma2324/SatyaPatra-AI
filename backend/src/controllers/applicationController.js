@@ -610,78 +610,61 @@ const recordOfficerDecision = async (req, res) => {
 const generatePdfReport = async (req, res) => {
   try {
     const id = req.params.id;
-    let application = store.applications.find(
-      (a) => String(a._id) === String(id) || a.applicationNumber === id,
-    );
-    let report = store.verificationReports.find(
-      (r) => application && String(r.applicationId) === String(application._id),
-    );
+    let application = null;
+    let report = null;
 
-    if (!application) {
-      application = {
-        applicationNumber: "ST-2026-10492",
-        applicantName: "Birsa Munda",
-        dob: "15/08/2002",
-        gender: "Male",
-        category: "ST",
-        subTribe: "Munda",
-        aadhaarNumberMasked: "XXXX-XXXX-1234",
-        income: 120000,
-        course: "B.Tech in Computer Science",
-        institution: "NIT Jamshedpur",
-        academicPercentage: 78.5,
-        bankAccountNumber: "389201948102",
-        ifscCode: "SBIN0001234",
-        bankName: "State Bank of India",
-        status: "approved",
-        riskScore: 10,
-        riskLevel: "LOW",
-      };
+    // 1. Look in MongoDB first (same order as getApplicationById)
+    if (mongoose.connection.readyState === 1) {
+      try {
+        application = mongoose.Types.ObjectId.isValid(id)
+          ? await Application.findById(id).populate("schemeId")
+          : null;
+        if (!application) {
+          application = await Application.findOne({
+            applicationNumber: id,
+          }).populate("schemeId");
+        }
+        if (application) {
+          report = await VerificationReport.findOne({
+            applicationId: application._id,
+          }).sort({ generatedAt: -1 });
+        }
+      } catch (e) {
+        application = null;
+      }
     }
 
+    // 2. Fall back to the in-memory store (used when there is no database)
+    if (!application) {
+      application = store.applications.find(
+        (a) => String(a._id) === String(id) || a.applicationNumber === id,
+      );
+      if (application) {
+        report = store.verificationReports.find(
+          (r) => String(r.applicationId) === String(application._id),
+        );
+      }
+    }
+
+    // 3. Never invent a report for a case that does not exist
+    if (!application) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Application not found." });
+    }
+
+    // Application exists but has not been verified yet: minimal report
     if (!report) {
       report = {
-        overallRiskScore: application.riskScore || 10,
+        riskScore: application.riskScore || 0,
         riskLevel: application.riskLevel || "LOW",
-        crossCheckMatrix: [
-          {
-            checkName: "Name Consistency",
-            field: "applicant_name",
-            extractedValue: application.applicantName,
-            expectedValue: application.applicantName,
-            matchScore: 100,
-            isMatch: true,
-          },
-          {
-            checkName: "Date of Birth Verification",
-            field: "dob",
-            extractedValue: application.dob,
-            expectedValue: application.dob,
-            matchScore: 100,
-            isMatch: true,
-          },
-          {
-            checkName: "ST Category Validity",
-            field: "category",
-            extractedValue: "Scheduled Tribe",
-            expectedValue: "ST",
-            matchScore: 100,
-            isMatch: true,
-          },
-        ],
-        fraudFlags: [],
-        schemeEligibility: {
-          isEligible: true,
-          incomeLimitPassed: true,
-          academicPercentagePassed: true,
-          reasons: ["All criteria satisfied"],
-        },
-        aiSummary:
-          "Clean application, all documents verified with high confidence.",
+        eligibilityResults: { rulesEvaluated: [] },
+        summaryReasons: [],
+        generatedAt: new Date(),
       };
     }
 
-    await logAudit(req, "REPORT_EXPORTED_PDF", application._id || "demo_id", {
+    await logAudit(req, "REPORT_EXPORTED_PDF", application._id, {
       applicationNumber: application.applicationNumber,
     });
 
